@@ -1,18 +1,65 @@
 from django.shortcuts import render
-
-from django.views.generic import ListView, DetailView  # импортируем класс, который говорит нам о том,
-# что в этом представлении мы будем выводить список объектов из БД
-from .models import Author, Category, Post, PostCategory, Comment
-
-
-class ProductsList(ListView):
-    model = Post  # указываем модель, объекты которой мы будем выводить
-    template_name = 'news.html'  # указываем имя шаблона, в котором будет лежать HTML, в котором будут все инструкции о том, как именно пользователю должны вывестись наши объекты
-    context_object_name = 'news'  # это имя списка, в котором будут лежать все объекты, его надо указать, чтобы обратиться к самому списку объектов через HTML-шаблон
-    queryset = Post.objects.order_by('-id')
+from django.views.generic import ListView, UpdateView, CreateView, DetailView, DeleteView
+from django.core.paginator import Paginator
+from .models import Post, Category
+from .filters import PostFilter
+from .forms import PostForm  # импортируем нашу форму
 
 
-class ProductDetail(DetailView):
-    model = Post  # модель всё та же, но мы хотим получать детали конкретно отдельного товара
-    template_name = 'post.html'  # название шаблона будет product.html
-    context_object_name = 'post'  # название объекта. в нём будет
+class Posts(ListView):
+    model = Post
+    template_name = 'news.html'
+    context_object_name = 'news'
+    ordering = ['-date_creation']
+    paginate_by = 3  # поставим постраничный вывод в один элемент
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+# дженерик для получения деталей о товаре
+class PostDetailView(DetailView):
+    template_name = 'news/post.html'
+    queryset = Post.objects.all()
+
+
+class SearchPost(ListView):
+    model = Post
+    template_name = 'search.html'
+    context_object_name = 'news'
+    ordering = ['-date_creation']
+    paginate_by = 10  # поставим постраничный вывод в один элемент
+
+    def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data
+        # у наследуемого класса (привет, полиморфизм, мы скучали!!!)
+        context = super().get_context_data(**kwargs)
+        context['filter'] = PostFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        context['categories'] = Category.objects.all()
+        context['form'] = PostForm()
+        return context
+
+
+# дженерик для создания объекта.
+class PostCreateView(CreateView):
+    template_name = 'news/post_create.html'
+    form_class = PostForm
+
+
+# дженерик для редактирования объекта
+class PostUpdateView(UpdateView):
+    template_name = 'news/post_edit.html'
+    form_class = PostForm
+
+# метод get_object мы используем вместо queryset, чтобы получить информацию об объекте, который мы собираемся
+    # редактировать
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return Post.objects.get(pk=id)
+
+
+# дженерик для удаления товара
+class PostDeleteView(DeleteView):
+    template_name = 'news/post_delete.html'
+    queryset = Post.objects.all()
+    success_url = '/news/'

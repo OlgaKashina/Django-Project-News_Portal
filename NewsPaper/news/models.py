@@ -19,9 +19,15 @@ class Author(models.Model):
         self.author_rating = pRate * 3 + cRat
         self.save()
 
+    def __str__(self):
+        return f'{self.author_user.username}'
+
 
 class Category(models.Model):
     name = models.CharField(max_length=64, unique=True)
+
+    def __str__(self):
+        return f'{self.name}'
 
 
 class Post(models.Model):
@@ -51,6 +57,12 @@ class Post(models.Model):
     def preview(self):
         return self.text[:124] + '...'  # лучше исп форматирование для экономии памяти
 
+    def __str__(self):
+        return f'{self.title} | {self.author} | {self.date_creation} | {self.preview()}'
+
+    def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
+        return f'/news/{self.id}'
+
 
 class PostCategory(models.Model):
     post_through = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -71,3 +83,6 @@ class Comment(models.Model):
     def dislike(self):
         self.rating -= 1
         self.save()
+
+    def __str__(self):
+        return f'{self.comment_user} | {self.date_creation}/n{self.text}'
