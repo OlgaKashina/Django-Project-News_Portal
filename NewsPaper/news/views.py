@@ -5,6 +5,8 @@ from .models import Post, Category
 from .filters import PostFilter
 from .forms import PostForm  # импортируем нашу форму
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 class Posts(ListView):
     model = Post
@@ -20,6 +22,7 @@ class Posts(ListView):
 
 # дженерик для получения деталей о товаре
 class PostDetailView(DetailView):
+    model = Post
     template_name = 'news/post.html'
     queryset = Post.objects.all()
 
@@ -42,12 +45,14 @@ class SearchPost(ListView):
 
 # дженерик для создания объекта.
 class PostCreateView(CreateView):
+    model = Post
     template_name = 'news/post_create.html'
     form_class = PostForm
 
 
 # дженерик для редактирования объекта
-class PostUpdateView(UpdateView):
+class PostUpdateView(LoginRequiredMixin, UpdateView):
+    model = Post
     template_name = 'news/post_edit.html'
     form_class = PostForm
 
@@ -60,6 +65,9 @@ class PostUpdateView(UpdateView):
 
 # дженерик для удаления товара
 class PostDeleteView(DeleteView):
+    model = Post
     template_name = 'news/post_delete.html'
     queryset = Post.objects.all()
     success_url = '/news/'
+
+
