@@ -6,6 +6,7 @@ from .filters import PostFilter
 from .forms import PostForm  # импортируем нашу форму
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 
 class Posts(ListView):
@@ -44,17 +45,19 @@ class SearchPost(ListView):
 
 
 # дженерик для создания объекта.
-class PostCreateView(CreateView):
+class PostCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Post
     template_name = 'news/post_create.html'
     form_class = PostForm
+    permission_required = ('news.add_post')
 
 
 # дженерик для редактирования объекта
-class PostUpdateView(LoginRequiredMixin, UpdateView):
+class PostUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Post
     template_name = 'news/post_edit.html'
     form_class = PostForm
+    permission_required = ('news.change_post')
 
 # метод get_object мы используем вместо queryset, чтобы получить информацию об объекте, который мы собираемся
     # редактировать

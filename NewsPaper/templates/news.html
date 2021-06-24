@@ -9,12 +9,15 @@
 
 <a href="search" class="btn btn-secondary" style="margin-bottom: 3%">Поиск</a>
 
+
 {% autoescape off %}
 
     <p></p>
     <p></p>
     <h3 style="text-align: left;"><strong>Все новости: ({{ news|length }})</strong></h3>
     <hr>
+
+
     {% if news %}
         {% for post in news %}
             <p style="text-align: left;">
