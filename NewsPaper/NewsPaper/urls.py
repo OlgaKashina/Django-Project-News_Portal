@@ -20,9 +20,9 @@ from django.shortcuts import redirect
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('pages/', include('django.contrib.flatpages.urls')),
-    # path('', lambda request: redirect('news/', permanent=False)),
+    path('', lambda request: redirect('news/', permanent=False)),
     path('news/', include('news.urls')),
-    path('', include('protect.urls')),
+
     path('sign/', include('sign.urls')),
     path('accounts/', include('allauth.urls'))
 ]

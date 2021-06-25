@@ -5,10 +5,20 @@
 
 {% block content %}
 
+<h2>Страница авторизованного пользователя {{request.user.username}}</h2>
+<div> Здесь может содержаться персональная информация для каждого пользователя </div>
+
+<button> <a href="/accounts/login/">Войти</a> </button>
+<button> <a href="/accounts/logout/">Выйти</a> </button>
+
+{% if is_not_author %}
+<button> <a href="/sign/upgrade/"> Стать автором </a> </button>
+{% endif %}
+
 <p></p>
 
 <a href="search" class="btn btn-secondary" style="margin-bottom: 3%">Поиск</a>
-
+<a href="{% url 'post_create' %}" class="btn btn-secondary" style="margin-bottom: 3%">Добавить новость</a>
 
 {% autoescape off %}
 
@@ -16,7 +26,6 @@
     <p></p>
     <h3 style="text-align: left;"><strong>Все новости: ({{ news|length }})</strong></h3>
     <hr>
-
 
     {% if news %}
         {% for post in news %}
@@ -56,8 +65,5 @@
     {% endif %}
 
 {% endif %}
-<p></p>
-<a href="{% url 'post_create' %}" class="btn btn-secondary">Добавить новость</a>
-
 
 {% endblock content %}

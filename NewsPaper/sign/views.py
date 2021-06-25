@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 class BaseRegisterView(CreateView):
     model = User
     form_class = BaseRegisterForm
-    success_url = '/sign/login' # изменила 24.06
+    success_url = '/sign/login'
 
 
 @login_required
