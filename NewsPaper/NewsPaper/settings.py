@@ -52,6 +52,7 @@ INSTALLED_APPS = [
 
     'sign',
 
+    'appointment',
 
     'allauth',
     'allauth.account',
@@ -168,3 +169,9 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 ACCOUNT_FORMS = {'signup': 'sign.models.CommonSignupForm'}
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'kashina.o2016'
+EMAIL_HOST_PASSWORD = 'olgavfrolova'
+EMAIL_USE_SSL = True
