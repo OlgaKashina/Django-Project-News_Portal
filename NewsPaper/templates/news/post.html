@@ -1,14 +1,29 @@
 {% extends 'flatpages/default.html' %}
 {% load custom_filters %}
 
-{% block title %} News {% endblock title %}
+{% block title %} Post {% endblock title %}
 
 {% block content %}
+<br>
+<p style="text-align: left;"><strong>{{ post.get_category_type_display|title }}, </strong>
+дата публикации: {{ post.date_creation|date:"d-m-Y P" }}</p>
+<h5 style="text-align: left;">{{ post.title|censor }}</h5>
+<p style="text-align: left;">{{ post.text|censor }}</p>
+<p style="text-align: left;"> Автор: {{ post.author }}</p>
+<p style="text-align: left;">Категория:<br> {% for name in post_categories %}
+        {{ name }} <br>
 
-    <h4 style="text-align: left;">{{ post.title|censor }}</h4>
-    <p style="text-align: left;">Дата публикации: {{ post.date_creation|date:"d-m-Y P" }} Автор: {{ post.author }}.</p>
+     {% if name not in user_categories %}
+    <button> <a href="{% url 'subscribe' name.id  %}">Подписаться</a> </button>
+    <br>
+        {% else %}
+        <h7> - Уже подписаны</h7>
+        <button> <a href="{% url 'unsubscribe' name.id  %}">Отписаться?</a> </button><br>
+{% endif %}
+
+    {% endfor %}</p>
     <hr>
-    <p style="text-align: left;">{{ post.text|censor }}</p>
+
     <p style="text-align: left;"><a href="/news/">Все новости</a></p>
 
 {% endblock content %}
